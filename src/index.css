@@ -1,0 +1,24 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  transition: 0.3s;
+
+  --bg-pink: #ff00dd;
+  --bg-white: #fff;
+  --bg-black: #000;
+
+  --font-pink: #000;
+  --font-white: #ff00dd;
+  --font-black: #ff00dd;
+
+  --bd-container: 1rem;
+  --bd-content: 0.5rem;
+
+  --border: 1px solid #00000020;
+  --content-color: #9d8383;
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
+}
