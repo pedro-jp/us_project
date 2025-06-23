@@ -130,7 +130,7 @@ function App() {
   const [searchedVerses, setSearchedVerses] = useState<sVersesRequest>();
   const [sVersion, setSVersion] = useState('nvi');
   const [sAbbrev, setSAbbrev] = useState('');
-  const [verse, setVerse] = useState<sVersesProps>(); //eslint-disable-line
+  const [verse, setVerse] = useState<sVersesProps>();
 
   // const imagesA = [];
 
@@ -508,6 +508,7 @@ function App() {
                 onMouseOver={() => setVerse(sverse)}
                 onClick={() => {
                   setVerse(sverse);
+                  console.log(verse);
                   navigator.clipboard.writeText(
                     `${searchedVerses.book.name} ${searchedVerses.chapter.number}:${sverse.number} \n${sverse.text}`
                   );
