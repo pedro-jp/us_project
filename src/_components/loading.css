@@ -1,0 +1,23 @@
+.contt {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+}
+
+svg {
+  position: absolute;
+}
+
+@keyframes pulse {
+  0% {
+    scale: 2;
+  }
+
+  50% {
+    scale: 0.9;
+  }
+
+  100% {
+    scale: 1;
+  }
+}
