@@ -312,7 +312,7 @@ function App() {
   const loadBooks = async () => {
     try {
       const res = await axios.get<BookProps[]>(
-        ' http://192.168.107.18:3332/get-books'
+        `${import.meta.env.VITE_SERVER_URL}/get-books`
       );
       console.log('Books fetched:', res.data);
       setBooks(res.data);
@@ -324,12 +324,15 @@ function App() {
   const saveVerse = async (chapter: number, number: number) => {
     setLoading(true);
     try {
-      const res = await axios.post('http://192.168.107.18:3332/save-verse', {
-        version: sVersion === 'ara' ? 'ra' : sVersion,
-        abbrev: sAbbrev,
-        chapter,
-        number
-      });
+      const res = await axios.post(
+        `${import.meta.env.VITE_SERVER_URL}/save-verse`,
+        {
+          version: sVersion === 'ara' ? 'ra' : sVersion,
+          abbrev: sAbbrev,
+          chapter,
+          number
+        }
+      );
       console.log('Verse saved:', res.data);
     } catch (e) {
       console.error('Error saving verse:', e);
@@ -343,7 +346,9 @@ function App() {
 
   const getVerses = async () => {
     try {
-      const res = await axios.get('http://192.168.107.18:3332/get-verses');
+      const res = await axios.get(
+        `${import.meta.env.VITE_SERVER_URL}/get-verses`
+      );
       console.log('Verses fetched:', res.data);
       setVerses(res.data);
     } catch (e) {
@@ -355,7 +360,9 @@ function App() {
     setLoading(true);
     try {
       const res = await axios.get(
-        `http://192.168.107.18:3332/search-verses/${sVersion}/${sAbbrev}/${chapter}`
+        `${
+          import.meta.env.VITE_SERVER_URL
+        }/search-verses/${sVersion}/${sAbbrev}/${chapter}`
       );
       setSearchedVerses(res.data);
     } catch (e) {
