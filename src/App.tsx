@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 import { FaFilm, FaNoteSticky } from 'react-icons/fa6';
-import { FaBible, FaPlusCircle } from 'react-icons/fa';
 import axios from 'axios';
 import { uploadImage } from './services/upload';
 import imageCompression from 'browser-image-compression';
-// import Loading from './_components/Loading';
+import { PuffLoader } from 'react-spinners';
+import { FaBible, FaPlusCircle } from 'react-icons/fa';
 
 interface Verse {
   version: string;
@@ -105,8 +105,6 @@ function App() {
   const [imageFile, setImageFile] = useState<File[] | null>(null);
   const [images, setImages] = useState<ImageType[]>();
 
-  // const imagesA = [];
-
   const [img0, setImg0] = useState(0);
   const [img1, setImg1] = useState(0);
   const [img2, setImg2] = useState(0);
@@ -128,6 +126,8 @@ function App() {
   const [img18, setImg18] = useState(0);
   const [img19, setImg19] = useState(0);
 
+  const [firstLoading, setFirstLoading] = useState(true);
+
   const amigos = '1584139208';
   const namorados = '1749336008';
 
@@ -146,7 +146,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (loading) return;
+    if (loading || firstLoading) return;
     setInterval(() => {
       setTypedText((prev) => {
         if (prev.length < text.length) {
@@ -154,43 +154,53 @@ function App() {
         }
         return prev;
       });
-    }, 100); // Adjust the speed of typing here (100ms per character)
-  }, [loading]);
+    }, 100);
+  }, [firstLoading, loading]);
 
   useEffect(() => {
+    firstLoad();
     loadImages();
     loadBooks();
     getVerses();
   }, []);
 
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      // for(let i = 0; i <= images.length; i++){
-      //   imagesA.push(Math.floor(Math.random() * images.length))
-      // }
+  const firstLoad = () => {
+    setTimeout(() => {
+      setFirstLoading(false);
+    }, 5000);
+  };
 
-      if (!images) return;
-      setImg0(Math.floor(Math.random() * images.length));
-      setImg1(Math.floor(Math.random() * images.length));
-      setImg2(Math.floor(Math.random() * images.length));
-      setImg3(Math.floor(Math.random() * images.length));
-      setImg4(Math.floor(Math.random() * images.length));
-      setImg5(Math.floor(Math.random() * images.length));
-      setImg6(Math.floor(Math.random() * images.length));
-      setImg7(Math.floor(Math.random() * images.length));
-      setImg8(Math.floor(Math.random() * images.length));
-      setImg9(Math.floor(Math.random() * images.length));
-      setImg10(Math.floor(Math.random() * images.length));
-      setImg11(Math.floor(Math.random() * images.length));
-      setImg12(Math.floor(Math.random() * images.length));
-      setImg13(Math.floor(Math.random() * images.length));
-      setImg14(Math.floor(Math.random() * images.length));
-      setImg15(Math.floor(Math.random() * images.length));
-      setImg16(Math.floor(Math.random() * images.length));
-      setImg17(Math.floor(Math.random() * images.length));
-      setImg18(Math.floor(Math.random() * images.length));
-      setImg19(Math.floor(Math.random() * images.length));
-    }, 10000);
+  useEffect(() => {
+    const intervalId = setInterval(
+      () => {
+        // for(let i = 0; i <= images.length; i++){
+        //   imagesA.push(Math.floor(Math.random() * images.length))
+        // }
+
+        if (!images) return;
+        setImg0(Math.floor(Math.random() * images.length));
+        setImg1(Math.floor(Math.random() * images.length));
+        setImg2(Math.floor(Math.random() * images.length));
+        setImg3(Math.floor(Math.random() * images.length));
+        setImg4(Math.floor(Math.random() * images.length));
+        setImg5(Math.floor(Math.random() * images.length));
+        setImg6(Math.floor(Math.random() * images.length));
+        setImg7(Math.floor(Math.random() * images.length));
+        setImg8(Math.floor(Math.random() * images.length));
+        setImg9(Math.floor(Math.random() * images.length));
+        setImg10(Math.floor(Math.random() * images.length));
+        setImg11(Math.floor(Math.random() * images.length));
+        setImg12(Math.floor(Math.random() * images.length));
+        setImg13(Math.floor(Math.random() * images.length));
+        setImg14(Math.floor(Math.random() * images.length));
+        setImg15(Math.floor(Math.random() * images.length));
+        setImg16(Math.floor(Math.random() * images.length));
+        setImg17(Math.floor(Math.random() * images.length));
+        setImg18(Math.floor(Math.random() * images.length));
+        setImg19(Math.floor(Math.random() * images.length));
+      },
+      firstLoading ? 1000 : 5000
+    );
 
     return () => clearInterval(intervalId);
   }, []);
@@ -404,6 +414,11 @@ function App() {
       className='container'
       style={{ userSelect: seeBackground ? 'none' : 'inherit' }}
     >
+      {firstLoading && (
+        <div className='first-loading'>
+          <PuffLoader color='purple' />
+        </div>
+      )}
       <div
         onMouseDown={() => {
           setSeeBackground(true);
@@ -709,9 +724,6 @@ function App() {
               }}
               onDoubleClick={() => {
                 setOpenForm({ state: true, type: 'biblia' });
-                if (bookOpen?.abbrev.pt !== '') {
-                  window.location.href = `#${bookOpen?.abbrev.pt}`;
-                }
               }}
             >
               <FaBible />
