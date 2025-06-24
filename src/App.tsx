@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 import { FaFilm, FaNoteSticky } from 'react-icons/fa6';
-import { FaBible } from 'react-icons/fa';
+import { FaBible, FaPlusCircle } from 'react-icons/fa';
 import axios from 'axios';
 import { uploadImage } from './services/upload';
+import imageCompression from 'browser-image-compression';
 // import Loading from './_components/Loading';
 
 interface Verse {
@@ -41,41 +42,6 @@ interface sVersesProps {
 interface BookOpenProps extends BookProps {
   index: number;
 }
-
-const images = [
-  'https://firebasestorage.googleapis.com/v0/b/helo-realtor.appspot.com/o/ana%2FWhatsApp%20Image%202025-06-10%20at%2016.53.00_4c2ab54a.jpg?alt=media&token=6ab8796a-d368-4ad6-be0c-e3c2efeca117',
-  'https://firebasestorage.googleapis.com/v0/b/helo-realtor.appspot.com/o/ana%2FWhatsApp%20Image%202025-06-10%20at%2016.53.03_06d71aa1.jpg?alt=media&token=88ebe8a2-576a-446e-9508-e05f888200fc',
-  'https://firebasestorage.googleapis.com/v0/b/helo-realtor.appspot.com/o/ana%2FWhatsApp%20Image%202025-06-10%20at%2016.53.04_809b5d2f.jpg?alt=media&token=e17615c7-1881-4656-8440-f4280d8f44fc',
-  'https://firebasestorage.googleapis.com/v0/b/helo-realtor.appspot.com/o/ana%2FWhatsApp%20Image%202025-06-10%20at%2016.53.07_ea2ddd61.jpg?alt=media&token=1bbd94ac-0967-4cfc-b54d-6eec435d6bb9',
-  'https://firebasestorage.googleapis.com/v0/b/helo-realtor.appspot.com/o/ana%2FWhatsApp%20Image%202025-06-10%20at%2016.53.15_d27b2cab.jpg?alt=media&token=64ad03a2-a68e-49c3-8112-5a1da9fbade2',
-  'https://firebasestorage.googleapis.com/v0/b/helo-realtor.appspot.com/o/ana%2FWhatsApp%20Image%202025-06-10%20at%2016.53.17_0cee4134.jpg?alt=media&token=1119eeac-9959-4b6e-954d-cbab75d28b29',
-  'https://firebasestorage.googleapis.com/v0/b/helo-realtor.appspot.com/o/ana%2FWhatsApp%20Image%202025-06-10%20at%2016.54.27_658a0f60.jpg?alt=media&token=606d4d1e-f423-4d5a-a2e6-58f5fcfc1a94',
-  'https://firebasestorage.googleapis.com/v0/b/helo-realtor.appspot.com/o/ana%2FWhatsApp%20Image%202025-06-10%20at%2016.54.28_026d3a5b.jpg?alt=media&token=8eda71ed-72c2-4951-9322-f8a75a3ea1dd',
-  'https://firebasestorage.googleapis.com/v0/b/helo-realtor.appspot.com/o/ana%2FWhatsApp%20Image%202025-06-10%20at%2016.54.30_4f49b866.jpg?alt=media&token=5605c07a-0999-4a6c-9a38-e4fd4880b399',
-  'https://firebasestorage.googleapis.com/v0/b/helo-realtor.appspot.com/o/ana%2FWhatsApp%20Image%202025-06-10%20at%2016.54.31_07223a7a.jpg?alt=media&token=47aee9b5-c2ea-43b7-979f-f688fe451c07',
-  'https://firebasestorage.googleapis.com/v0/b/helo-realtor.appspot.com/o/ana%2FWhatsApp%20Image%202025-06-10%20at%2016.59.45_e4525695.jpg?alt=media&token=1c2d2f8f-e581-4de9-a2a4-2e9ef8a0667c',
-  'https://firebasestorage.googleapis.com/v0/b/helo-realtor.appspot.com/o/ana%2FIMG-20250623-WA0031.jpg?alt=media&token=5e11fc92-34e2-4aa7-8ab8-3dce8be2b6df',
-  'https://firebasestorage.googleapis.com/v0/b/helo-realtor.appspot.com/o/ana%2FIMG-20250623-WA0032.jpg?alt=media&token=ff687458-17d8-44ce-8071-3191c3f31eb3',
-  'https://firebasestorage.googleapis.com/v0/b/helo-realtor.appspot.com/o/ana%2FIMG-20250623-WA0033.jpg?alt=media&token=6e852b8b-f09c-47c4-9792-2d0dcb32dd6f',
-  'https://firebasestorage.googleapis.com/v0/b/helo-realtor.appspot.com/o/ana%2FIMG-20250623-WA0034.jpg?alt=media&token=cad18174-809c-4f80-8fc0-1d7cbd8b944c',
-  'https://firebasestorage.googleapis.com/v0/b/helo-realtor.appspot.com/o/ana%2FIMG-20250623-WA0035.jpg?alt=media&token=4323b6ce-2c3c-4457-a369-c06c97f5238d',
-  'https://firebasestorage.googleapis.com/v0/b/helo-realtor.appspot.com/o/ana%2FIMG-20250623-WA0036.jpg?alt=media&token=6d849078-3507-47a7-bd4b-a045bfd344a3',
-  'https://firebasestorage.googleapis.com/v0/b/helo-realtor.appspot.com/o/ana%2FIMG-20250623-WA0037.jpg?alt=media&token=422e7292-abbf-4442-84a3-2fbfb08cdaea',
-  'https://firebasestorage.googleapis.com/v0/b/helo-realtor.appspot.com/o/ana%2FIMG-20250623-WA0038.jpg?alt=media&token=d61cd664-cfdd-45ee-8f92-da32a52f8a3f',
-  'https://firebasestorage.googleapis.com/v0/b/helo-realtor.appspot.com/o/ana%2FIMG-20250623-WA0039.jpg?alt=media&token=97791738-d29a-47e1-ad4e-b37b69172714',
-  'https://firebasestorage.googleapis.com/v0/b/helo-realtor.appspot.com/o/ana%2FIMG-20250623-WA0040.jpg?alt=media&token=e6241810-a26b-4248-9fdb-d1bbb0a9580f',
-  'https://firebasestorage.googleapis.com/v0/b/helo-realtor.appspot.com/o/ana%2FIMG-20250623-WA0041.jpg?alt=media&token=58bd17b2-7eed-4a4b-92ef-8ee1de5098a7',
-  'https://firebasestorage.googleapis.com/v0/b/helo-realtor.appspot.com/o/ana%2FIMG-20250623-WA0042.jpg?alt=media&token=198b7c01-44c6-4319-8e27-9b41c1954db0',
-  'https://firebasestorage.googleapis.com/v0/b/helo-realtor.appspot.com/o/ana%2FIMG-20250623-WA0043.jpg?alt=media&token=235a80fd-ce09-4d1b-9c17-0319cabe5021',
-  'https://firebasestorage.googleapis.com/v0/b/helo-realtor.appspot.com/o/ana%2FIMG-20250623-WA0044.jpg?alt=media&token=d23a8414-0987-4d0a-acc8-1b7dbdbcd291',
-  'https://firebasestorage.googleapis.com/v0/b/helo-realtor.appspot.com/o/ana%2FIMG-20250623-WA0045.jpg?alt=media&token=a694524b-4ccc-4307-8720-712802df5495',
-  'https://firebasestorage.googleapis.com/v0/b/helo-realtor.appspot.com/o/ana%2FIMG-20250623-WA0046.jpg?alt=media&token=36465dd8-3147-4bf2-be52-d691448b1e60',
-  'https://firebasestorage.googleapis.com/v0/b/helo-realtor.appspot.com/o/ana%2FIMG-20250623-WA0047.jpg?alt=media&token=a8e6a417-4ce2-4508-ab86-22db99ef8df0',
-  'https://firebasestorage.googleapis.com/v0/b/helo-realtor.appspot.com/o/ana%2FIMG-20250623-WA0048.jpg?alt=media&token=ef0dfea4-be33-4efc-8262-475c6f966c5e',
-  'https://firebasestorage.googleapis.com/v0/b/helo-realtor.appspot.com/o/ana%2FIMG-20250623-WA0049.jpg?alt=media&token=c4af41b2-27d5-405e-8bc3-1c210b050dad',
-  'https://firebasestorage.googleapis.com/v0/b/helo-realtor.appspot.com/o/ana%2FIMG-20250623-WA0050.jpg?alt=media&token=4c8fb32a-aa41-4397-a71a-8dedddde3712',
-  'https://firebasestorage.googleapis.com/v0/b/helo-realtor.appspot.com/o/ana%2FIMG-20250623-WA0051.jpg?alt=media&token=e66e2605-1b7a-4bb4-bcb4-f75b091f9410'
-];
 
 const text =
   ' Sessão dedicada para anotações sobre nós, versículos que achar legais e filmes para assistir';
@@ -118,6 +84,10 @@ const getPtVersion = (version: string): string => {
   }
 };
 
+type ImageType = {
+  url: string;
+};
+
 function App() {
   const [currentBtn, setCurrentBtn] = useState('biblia');
   const [now, setNow] = useState(Date.now());
@@ -133,6 +103,7 @@ function App() {
   const [sAbbrev, setSAbbrev] = useState('');
   const [verse, setVerse] = useState<sVersesProps>();
   const [imageFile, setImageFile] = useState<File[] | null>(null);
+  const [images, setImages] = useState<ImageType[]>();
 
   // const imagesA = [];
 
@@ -187,6 +158,7 @@ function App() {
   }, [loading]);
 
   useEffect(() => {
+    loadImages();
     loadBooks();
     getVerses();
   }, []);
@@ -196,6 +168,8 @@ function App() {
       // for(let i = 0; i <= images.length; i++){
       //   imagesA.push(Math.floor(Math.random() * images.length))
       // }
+
+      if (!images) return;
       setImg0(Math.floor(Math.random() * images.length));
       setImg1(Math.floor(Math.random() * images.length));
       setImg2(Math.floor(Math.random() * images.length));
@@ -316,26 +290,32 @@ function App() {
       const res = await axios.get<BookProps[]>(
         `${import.meta.env.VITE_SERVER_URL}/get-books`
       );
-      console.log('Books fetched:', res.data);
       setBooks(res.data);
     } catch (e) {
       console.log(e);
     }
   };
 
+  const loadImages = async () => {
+    try {
+      const res = await axios.get<ImageType[]>(
+        `${import.meta.env.VITE_SERVER_URL}/get-images`
+      );
+      setImages(res.data);
+    } catch (e) {
+      console.error('Error fetching images:', e);
+    }
+  };
+
   const saveVerse = async (chapter: number, number: number) => {
     setLoading(true);
     try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_SERVER_URL}/save-verse`,
-        {
-          version: sVersion === 'ara' ? 'ra' : sVersion,
-          abbrev: sAbbrev,
-          chapter,
-          number
-        }
-      );
-      console.log('Verse saved:', res.data);
+      await axios.post(`${import.meta.env.VITE_SERVER_URL}/save-verse`, {
+        version: sVersion === 'ara' ? 'ra' : sVersion,
+        abbrev: sAbbrev,
+        chapter,
+        number
+      });
     } catch (e) {
       console.error('Error saving verse:', e);
     } finally {
@@ -351,7 +331,6 @@ function App() {
       const res = await axios.get(
         `${import.meta.env.VITE_SERVER_URL}/get-verses`
       );
-      console.log('Verses fetched:', res.data);
       setVerses(res.data);
     } catch (e) {
       console.error('Error fetching verses:', e);
@@ -385,6 +364,15 @@ function App() {
     }
   }, [imageFile]); //eslint-disable-line
 
+  const compressImage = async (file: File) => {
+    const options = {
+      maxSizeMB: 0.5,
+      useWebWorker: true
+    };
+    const compressedFile = await imageCompression(file, options);
+    return compressedFile;
+  };
+
   const handleAddImage = async () => {
     try {
       if (!imageFile) {
@@ -397,11 +385,17 @@ function App() {
       for (let i = 0; i < imageFile.length; i++) {
         const file = imageFile[i];
         if (file) {
-          await uploadImage(URL.createObjectURL(file), '', 'upload-image');
+          await uploadImage(
+            URL.createObjectURL(await compressImage(file)),
+            '',
+            'upload-image'
+          );
         }
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      loadImages();
     }
   };
 
@@ -425,121 +419,129 @@ function App() {
         }}
         className={`parent ${seeBackground ? 'seeBackground' : ''}`}
       >
-        <div className='div1'>
-          {' '}
-          <img src={images[img0]} alt='' />
-        </div>
-        <div className='div2'>
-          {' '}
-          <img src={images[img1]} alt='' />
-        </div>
-        <div className='div3'>
-          {' '}
-          <img src={images[img2]} alt='' />
-        </div>
-        <div className='div4'>
-          {' '}
-          <img src={images[img3]} alt='' />
-        </div>
-        <div className='div5'>
-          {' '}
-          <img src={images[img4]} alt='' />
-        </div>
-        <div className='div6'>
-          {' '}
-          <img src={images[img5]} alt='' />
-        </div>
-        <div className='div7'>
-          {' '}
-          <img src={images[img6]} alt='' />
-        </div>
-        <div className='div8'>
-          {' '}
-          <img src={images[img7]} alt='' />
-        </div>
-        <div className='div9'>
-          {' '}
-          <img src={images[img8]} alt='' />
-        </div>
-        <div className='div10'>
-          {' '}
-          <img src={images[img9]} alt='' />
-        </div>
-        <div className='div11'>
-          {' '}
-          <img src={images[img10]} alt='' />
-        </div>
-        <div className='div12'>
-          {' '}
-          <img src={images[img11]} alt='' />
-        </div>
-        <div className='div13'>
-          {' '}
-          <img src={images[img12]} alt='' />
-        </div>
-        <div className='div14'>
-          {' '}
-          <img src={images[img13]} alt='' />
-        </div>
-        <div className='div15'>
-          {' '}
-          <img src={images[img14]} alt='' />
-        </div>
-        <div className='div16'>
-          {' '}
-          <img src={images[img15]} alt='' />
-        </div>
-        <div className='div17'>
-          {' '}
-          <img src={images[img16]} alt='' />
-        </div>
-        <div className='div18'>
-          {' '}
-          <img src={images[img17]} alt='' />
-        </div>
-        <div className='div19'>
-          {' '}
-          <img src={images[img18]} alt='' />
-        </div>
-        <div className='div20'>
-          {' '}
-          <img src={images[img19]} alt='' />
-        </div>
+        {images && images.length > 0 && (
+          <>
+            <div className='div1'>
+              {' '}
+              <img src={images[img0].url} alt='' />
+            </div>
+            <div className='div2'>
+              {' '}
+              <img src={images[img1].url} alt='' />
+            </div>
+            <div className='div3'>
+              {' '}
+              <img src={images[img2].url} alt='' />
+            </div>
+            <div className='div4'>
+              {' '}
+              <img src={images[img3].url} alt='' />
+            </div>
+            <div className='div5'>
+              {' '}
+              <img src={images[img4].url} alt='' />
+            </div>
+            <div className='div6'>
+              {' '}
+              <img src={images[img5].url} alt='' />
+            </div>
+            <div className='div7'>
+              {' '}
+              <img src={images[img6].url} alt='' />
+            </div>
+            <div className='div8'>
+              {' '}
+              <img src={images[img7].url} alt='' />
+            </div>
+            <div className='div9'>
+              {' '}
+              <img src={images[img8].url} alt='' />
+            </div>
+            <div className='div10'>
+              {' '}
+              <img src={images[img9].url} alt='' />
+            </div>
+            <div className='div11'>
+              {' '}
+              <img src={images[img10].url} alt='' />
+            </div>
+            <div className='div12'>
+              {' '}
+              <img src={images[img11].url} alt='' />
+            </div>
+            <div className='div13'>
+              {' '}
+              <img src={images[img12].url} alt='' />
+            </div>
+            <div className='div14'>
+              {' '}
+              <img src={images[img13].url} alt='' />
+            </div>
+            <div className='div15'>
+              {' '}
+              <img src={images[img14].url} alt='' />
+            </div>
+            <div className='div16'>
+              {' '}
+              <img src={images[img15].url} alt='' />
+            </div>
+            <div className='div17'>
+              {' '}
+              <img src={images[img16].url} alt='' />
+            </div>
+            <div className='div18'>
+              {' '}
+              <img src={images[img17].url} alt='' />
+            </div>
+            <div className='div19'>
+              {' '}
+              <img src={images[img18].url} alt='' />
+            </div>
+            <div className='div20'>
+              {' '}
+              <img src={images[img19].url} alt='' />
+            </div>
+          </>
+        )}
       </div>
       <div></div>
       <section className='images-container'>
+        <button type='button' className='add-image-button'>
+          <input
+            type='file'
+            multiple
+            name='image'
+            id=''
+            onChange={handleFileChange}
+          />
+          <FaPlusCircle color='purple' size={20} />
+        </button>
         <div className='first-content'>
           <div className='main-images'>
             <div className='main-images-content'>
-              {images.map((image, index) => (
-                <picture key={index}>
-                  <img src={image} alt='' />
-                </picture>
-              ))}
+              {images &&
+                images.map((image, index) => (
+                  <picture key={index}>
+                    <img src={image.url} alt='' />
+                  </picture>
+                ))}
             </div>
           </div>
         </div>
         <div className='second-images-container'>
           <div className='second-images-line'>
             <div className='second-images-line-content'>
-              {images.map((image, index) => (
-                <picture key={index}>
-                  <img src={image} alt='' />
-                </picture>
-              ))}
+              {images &&
+                images.map((image, index) => (
+                  <picture key={index}>
+                    <img src={image.url} alt='' />
+                  </picture>
+                ))}
             </div>
           </div>
         </div>
       </section>
-      <button type='button'>
-        <input
-          type='file'
-          multiple
-          name='image'
-          id=''
-          onChange={handleFileChange}
-        />
-      </button>
+
       {searchedVerses && searchedVerses.verses.length > 0 && (
         <div className='verse-modal'>
           <div className='verse-modal-content'>

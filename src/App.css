@@ -586,3 +586,34 @@ summary {
     text-decoration: underline;
   }
 }
+
+.add-image-button {
+  position: absolute;
+  inset: 0;
+  width: 30px;
+  height: 30px;
+  inset: 1rem;
+  opacity: none;
+  background-color: transparent;
+  border: none;
+  outline: none;
+
+  &:hover {
+    scale: 1.1;
+  }
+
+  &:active,
+  &:focus {
+    scale: 0.9;
+  }
+
+  input {
+    all: inset;
+    background-color: transparent;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+  }
+}
