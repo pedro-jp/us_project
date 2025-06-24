@@ -3,6 +3,7 @@ import './App.css';
 import { FaFilm, FaNoteSticky } from 'react-icons/fa6';
 import { FaBible } from 'react-icons/fa';
 import axios from 'axios';
+import { uploadImage } from './services/upload';
 // import Loading from './_components/Loading';
 
 interface Verse {
@@ -131,6 +132,7 @@ function App() {
   const [sVersion, setSVersion] = useState('nvi');
   const [sAbbrev, setSAbbrev] = useState('');
   const [verse, setVerse] = useState<sVersesProps>();
+  const [imageFile, setImageFile] = useState<File[] | null>(null);
 
   // const imagesA = [];
 
@@ -372,6 +374,37 @@ function App() {
     }
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files ? Array.from(e.target.files) : null;
+    setImageFile(files);
+  };
+
+  useEffect(() => {
+    if (imageFile) {
+      handleAddImage();
+    }
+  }, [imageFile]); //eslint-disable-line
+
+  const handleAddImage = async () => {
+    try {
+      if (!imageFile) {
+        return;
+      }
+
+      if (!imageFile || imageFile.length === 0) {
+        return;
+      }
+      for (let i = 0; i < imageFile.length; i++) {
+        const file = imageFile[i];
+        if (file) {
+          await uploadImage(URL.createObjectURL(file), '', 'upload-image');
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div
       className='container'
@@ -473,6 +506,7 @@ function App() {
           <img src={images[img19]} alt='' />
         </div>
       </div>
+      <div></div>
       <section className='images-container'>
         <div className='first-content'>
           <div className='main-images'>
@@ -497,6 +531,15 @@ function App() {
           </div>
         </div>
       </section>
+      <button type='button'>
+        <input
+          type='file'
+          multiple
+          name='image'
+          id=''
+          onChange={handleFileChange}
+        />
+      </button>
       {searchedVerses && searchedVerses.verses.length > 0 && (
         <div className='verse-modal'>
           <div className='verse-modal-content'>
