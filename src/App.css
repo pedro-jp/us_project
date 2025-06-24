@@ -623,7 +623,13 @@ summary {
   overflow: hidden;
 }
 
-.first-loading {
+*:has(.loading) {
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.first-loading,
+.loading {
   position: fixed;
   inset: 0;
   height: 100vh;
@@ -634,4 +640,9 @@ summary {
   place-content: center;
   pointer-events: none;
   z-index: 9999999;
+}
+
+.loading {
+  background-color: rgba(255, 255, 255, 0.478);
+  backdrop-filter: blur(2px);
 }

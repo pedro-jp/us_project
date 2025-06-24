@@ -93,7 +93,7 @@ function App() {
   const [now, setNow] = useState(Date.now());
   const [seeBackground, setSeeBackground] = useState(false);
   const [typedText, setTypedText] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [openForm, setOpenForm] = useState({ state: false, type: 'bible' });
   const [verses, setVerses] = useState<Verse[]>([]);
   const [books, setBooks] = useState<BookProps[]>([]);
@@ -132,12 +132,6 @@ function App() {
   const namorados = '1749336008';
 
   const [theDay, setTheDay] = useState(amigos);
-
-  useEffect(() => {
-    setInterval(() => {
-      setLoading(false);
-    }, 500);
-  });
 
   useEffect(() => {
     setInterval(() => {
@@ -276,7 +270,10 @@ function App() {
       timeString += `${days % 365} dias, `;
     }
     if (hours > 0) {
-      timeString += `${hours % 24} horas e `;
+      timeString += `${hours % 24} horas, `;
+    }
+    if (minutes > 0) {
+      timeString += `${minutes % 60} minutos e `;
     }
     timeString += `${seconds % 60} segundos`;
 
@@ -384,6 +381,7 @@ function App() {
   };
 
   const handleAddImage = async () => {
+    setLoading(true);
     try {
       if (!imageFile) {
         return;
@@ -400,12 +398,13 @@ function App() {
             '',
             'upload-image'
           );
+          loadImages();
         }
       }
     } catch (error) {
       console.log(error);
     } finally {
-      loadImages();
+      setLoading(false);
     }
   };
 
@@ -416,6 +415,12 @@ function App() {
     >
       {firstLoading && (
         <div className='first-loading'>
+          <PuffLoader color='purple' />
+        </div>
+      )}
+
+      {loading && (
+        <div className='loading'>
           <PuffLoader color='purple' />
         </div>
       )}
@@ -524,10 +529,18 @@ function App() {
         <button type='button' className='add-image-button'>
           <input
             type='file'
-            multiple
+            accept='image/*'
             name='image'
             id=''
-            onChange={handleFileChange}
+            onChange={(e) => {
+              const files = e.target.files;
+              if (files && files.length > 5) {
+                alert('Apenas 5 imagens podem ser enviadas de uma vez');
+                e.target.value = '';
+                return;
+              }
+              handleFileChange(e);
+            }}
           />
           <FaPlusCircle color='purple' size={20} />
         </button>
