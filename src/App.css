@@ -266,9 +266,9 @@ section {
 
     .second-images-line-content {
       display: flex;
-      height: 100px;
+      max-height: 100px;
       gap: 1rem;
-      width: max-content;
+      height: 100px;
 
       img {
         width: max-content;

@@ -549,9 +549,7 @@ function App() {
             <div className='main-images-content'>
               {images &&
                 images.map((image, index) => (
-                  <picture key={index}>
-                    <img src={image.url} alt='' />
-                  </picture>
+                  <img key={index} src={image.url} alt={`imagem ${index}`} />
                 ))}
             </div>
           </div>
@@ -561,9 +559,7 @@ function App() {
             <div className='second-images-line-content'>
               {images &&
                 images.map((image, index) => (
-                  <picture key={index}>
-                    <img src={image.url} alt='' />
-                  </picture>
+                  <img key={index} src={image.url} alt={`imagem ${index}`} />
                 ))}
             </div>
           </div>
