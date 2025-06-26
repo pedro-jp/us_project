@@ -44,7 +44,7 @@ interface BookOpenProps extends BookProps {
 }
 
 const text =
-  ' Sessão dedicada para anotações sobre nós, versículos que achar legais e filmes para assistir';
+  ' Sessão dedicada para anotações sobre nós, versículos e filmes para assistir';
 
 const versions = [
   {
@@ -104,6 +104,7 @@ function App() {
   const [verse, setVerse] = useState<sVersesProps>();
   const [imageFile, setImageFile] = useState<File[] | null>(null);
   const [images, setImages] = useState<ImageType[]>();
+  const [hasConnection, setHasConnection] = useState(true);
 
   const [img0, setImg0] = useState(0);
   const [img1, setImg1] = useState(0);
@@ -152,11 +153,15 @@ function App() {
   }, [firstLoading, loading]);
 
   useEffect(() => {
+    testConnection();
+  }, []);
+  useEffect(() => {
     firstLoad();
     loadImages();
     loadBooks();
     getVerses();
-  }, []);
+    // changeImages();
+  });
 
   const firstLoad = () => {
     setTimeout(() => {
@@ -164,13 +169,9 @@ function App() {
     }, 5000);
   };
 
-  useEffect(() => {
+  const changeImages = () => {
     const intervalId = setInterval(
       () => {
-        // for(let i = 0; i <= images.length; i++){
-        //   imagesA.push(Math.floor(Math.random() * images.length))
-        // }
-
         if (!images) return;
         setImg0(Math.floor(Math.random() * images.length));
         setImg1(Math.floor(Math.random() * images.length));
@@ -197,30 +198,13 @@ function App() {
     );
 
     return () => clearInterval(intervalId);
-  }, []);
+  };
+
+  let im = changeImages;
+
+  im = 'oi' as any; // eslint-disable-line
 
   const date = Number(theDay + '000');
-  // const diference = Number(now) - Number(date);
-
-  // const getTime = (diference: number) => {
-  //   const seconds = Math.floor(diference / 1000);
-  //   const minutes = Math.floor(seconds / 60);
-  //   const hours = Math.floor(minutes / 60);
-  //   const days = Math.floor(hours / 24);
-  //   const weeks = Math.floor(days / 7);
-  //   const months = Math.floor(weeks / 4);
-  //   const years = Math.floor(days / 365);
-
-  //   return {
-  //     seconds,
-  //     minutes,
-  //     hours,
-  //     days,
-  //     weeks,
-  //     months,
-  //     years
-  //   };
-  // };
 
   const timeObj = () => {
     const startDate = new Date(date);
@@ -292,14 +276,33 @@ function App() {
 
   // if (1 + 1 === 2) return <Loading />;
 
+  const testConnection = async () => {
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_SERVER_URL}/test-connection`
+      );
+
+      if (res) {
+        setHasConnection(true);
+      }
+    } catch (e) {
+      if (e) {
+        setHasConnection(false);
+      }
+    }
+  };
+
   const loadBooks = async () => {
     try {
       const res = await axios.get<BookProps[]>(
         `${import.meta.env.VITE_SERVER_URL}/get-books`
       );
       setBooks(res.data);
+      setHasConnection(true);
     } catch (e) {
       console.log(e);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -309,8 +312,11 @@ function App() {
         `${import.meta.env.VITE_SERVER_URL}/get-images`
       );
       setImages(res.data);
+      setHasConnection(true);
     } catch (e) {
       console.error('Error fetching images:', e);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -407,6 +413,14 @@ function App() {
       setLoading(false);
     }
   };
+
+  if (!hasConnection)
+    return (
+      <h1>
+        Ops... Parece que sua conexão caiu ou o servidor está iniciando, assim
+        que estivermos prontos a página será carregada automaticamente.
+      </h1>
+    );
 
   return (
     <div
@@ -569,9 +583,17 @@ function App() {
       {searchedVerses && searchedVerses.verses.length > 0 && (
         <div className='verse-modal'>
           <div className='verse-modal-content'>
-            <h3>
-              {searchedVerses.book.name} {searchedVerses.chapter.number}
-            </h3>
+            <div className='verse-modal-header'>
+              <h3>
+                {searchedVerses.book.name} {searchedVerses.chapter.number}
+              </h3>
+              <button
+                className='close-button'
+                onClick={() => setSearchedVerses(undefined)}
+              >
+                <strong>X</strong>
+              </button>
+            </div>
             {searchedVerses.verses.map((sverse, index) => (
               <span
                 onMouseOver={() => setVerse(sverse)}
@@ -595,14 +617,19 @@ function App() {
         </div>
       )}
       <section className='notes-main-container'>
-        <div className='sub-caption'>{typedText}</div>
+        {!firstLoading && <div className='sub-caption'>{typedText}</div>}
 
         <div className='notes-container'>
           <div className='notes'>
             <div className='content'>
               {currentBtn === 'notas' && (
                 <>
-                  <div className='text'>Notas</div>
+                  <div className='text'>
+                    Notas Lorem ipsum dolor sit amet consectetur adipisicing
+                    elit. Repudiandae maxime nihil nobis, neque voluptatibus
+                    nulla eius assumenda. Laborum, corporis ut repellat vero,
+                    voluptas ipsum minus inventore hic alias, animi similique?
+                  </div>
                   {openForm.state && openForm.type === 'notas' && (
                     <div className='text'>
                       <textarea className='textarea' />
@@ -698,7 +725,13 @@ function App() {
               )}
               {currentBtn === 'filmes' && (
                 <>
-                  <div className='text'>Filmes</div>
+                  <div className='text'>
+                    Filmes Lorem ipsum dolor sit amet, consectetur adipisicing
+                    elit. Rerum nemo perspiciatis ullam vel, neque minima quas
+                    inventore veritatis earum necessitatibus delectus? Voluptas
+                    incidunt deserunt modi quis voluptate iusto laudantium
+                    similique.
+                  </div>
                   {openForm.state && openForm.type === 'filmes' && (
                     <div className='text filme'>
                       <textarea className='textarea' />
