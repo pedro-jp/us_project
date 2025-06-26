@@ -358,6 +358,12 @@ section {
     } */
     overflow: auto !important;
 
+    @media (width <= 800px) {
+      width: 100%;
+      max-width: 100%;
+      margin-inline: auto;
+    }
+
     .content {
       height: fit-content;
       width: 100%;
@@ -489,6 +495,7 @@ section {
 }
 
 .details {
+  width: 100%;
   &:hover {
     .versions {
       transform: scaleX(1);
@@ -573,10 +580,21 @@ summary {
   width: 90vw;
   border-radius: 1rem;
   padding: 0.5rem;
-  height: 90vh;
+  height: max-content;
   background-color: rgba(255, 255, 255, 0.678);
   backdrop-filter: blur(10px);
   overflow: auto;
+
+  .verse-modal-header {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+
+    .close-button {
+      all: unset;
+    }
+  }
 
   .verse-modal-content {
     height: max-content;
