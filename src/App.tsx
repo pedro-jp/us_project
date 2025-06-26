@@ -204,6 +204,7 @@ function App() {
 
   im = 'oi' as any; // eslint-disable-line
 
+  console.log(im);
   const date = Number(theDay + '000');
 
   const timeObj = () => {
