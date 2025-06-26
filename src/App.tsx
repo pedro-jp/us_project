@@ -200,13 +200,9 @@ function App() {
     return () => clearInterval(intervalId);
   };
 
-  let im = changeImages();
+  let im = changeImages;
 
-  im = () => {
-    console.log(1);
-  };
-
-  im();
+  im = 'oi' as any; // eslint-disable-line
 
   const date = Number(theDay + '000');
 
