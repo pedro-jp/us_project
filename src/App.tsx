@@ -155,7 +155,6 @@ function App() {
   useEffect(() => {
     testConnection();
   }, []);
-
   useEffect(() => {
     firstLoad();
     loadImages();
@@ -200,6 +199,14 @@ function App() {
 
     return () => clearInterval(intervalId);
   };
+
+  let im = changeImages();
+
+  im = () => {
+    console.log(1);
+  };
+
+  im();
 
   const date = Number(theDay + '000');
 
